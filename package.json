@@ -4,7 +4,9 @@
   "description": "AWS backend for my pingu slash command",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "create": "claudia create --region us-east-1 --api-module bot",
+    "deploy" : "claudia update",
+    "test" : "claudia test-lambda --event ./testdata/basicTest.json"
   },
   "repository": {
     "type": "git",
