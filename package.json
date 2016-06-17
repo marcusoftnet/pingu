@@ -1,0 +1,26 @@
+{
+  "name": "pingu",
+  "version": "1.0.0",
+  "description": "AWS backend for my pingu slash command",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "lambda",
+    "aws",
+    "slack",
+    "bot"
+  ],
+  "author": "Marcus Hammarberg @marcusoftnet",
+  "license": "MIT",
+  "dependencies": {
+    "claudia-bot-builder": "^1.0.0",
+    "co": "^4.6.0",
+    "co-request": "^1.0.0"
+  }
+}
