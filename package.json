@@ -21,7 +21,7 @@
   "author": "Marcus Hammarberg @marcusoftnet",
   "license": "MIT",
   "dependencies": {
-    "claudia-bot-builder": "^1.0.0",
+    "claudia-bot-builder": "~1.4.1",
     "co": "^4.6.0",
     "co-each": "^0.1.0",
     "co-request": "^1.0.0"
