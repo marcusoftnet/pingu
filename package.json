@@ -5,8 +5,8 @@
   "main": "bot.js",
   "scripts": {
     "create": "claudia create --region us-east-1 --api-module bot",
-    "deploy" : "claudia update",
-    "test" : "claudia test-lambda --event ./testdata/basicTest.json"
+    "deploy": "claudia update",
+    "test": "claudia test-lambda --event ./testdata/basicTest.json"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "dependencies": {
     "claudia-bot-builder": "^1.0.0",
     "co": "^4.6.0",
+    "co-each": "^0.1.0",
     "co-request": "^1.0.0"
   }
 }
