@@ -4,7 +4,6 @@
   "description": "AWS backend for my pingu slash command",
   "main": "bot.js",
   "scripts": {
-    "create": "claudia create --region us-east-1 --api-module bot",
     "create": "claudia create --api-module bot --region us-east-1 --timeout 120 --allow-recursion --configure-slack-slash-command",
     "deploy": "claudia update",
     "undeploy" : "claudia destroy",
