@@ -1,6 +1,7 @@
 const botBuilder = require('claudia-bot-builder');
 const co = require('co');
 const coreq = require('co-request');
+const each = require('co-each');
 const aws = require('aws-sdk');
 const lambda = new aws.Lambda();
 
@@ -35,26 +36,30 @@ const api = botBuilder((message, apiRequest) => {
 const slackDelayedReply = botBuilder.slackDelayedReply;
 
 api.intercept((event) => {
-  if (!event.slackEvent) return event;
+  return co(function *() {
+    if (!event.slackEvent) return event;
 
-  const message = event.slackEvent; //original slack message sent to bot
-  const urls = urlsFromSlackMessage(message);
+    const message = event.slackEvent; //original slack message sent to bot
+    const urls = urlsFromSlackMessage(message);
 
-  var pingResults = [];
-  for (const i = 0; i < urls.length; i++) {
-    pingResults.push(pingUrl(urls[i]))
-  }
+    var pingResults = yield each(urls, pingUrl);
+    var attachments = yield each(pingResults, pingResultToSlackAttachement);
 
-  return slackDelayedReply(message, {
-    "response_type": "ephemeral",
-    "text": `Ping results for '${message}':`,
-    "attachments": JSON.stringify(pingResults)
-  })
-  .then(() => false); // prevents normal execution
+    return slackDelayedReply(message, {
+      response_type: "ephemeral",
+      text: `Ping results for '${pingResults.length}':`,
+      attachments: attachments
+    })
+    .then(() => false); // prevents normal execution
+  });
 });
 
 function urlsFromSlackMessage(message){
   return message.text.split(',');
+};
+
+function pingResultToSlackAttachement(url){
+  return { text : url };
 };
 
 function pingUrl(url) {

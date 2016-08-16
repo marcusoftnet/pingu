@@ -6,7 +6,7 @@
   "scripts": {
     "create": "claudia create --api-module bot --region us-east-1 --timeout 120 --allow-recursion --configure-slack-slash-command",
     "deploy": "claudia update",
-    "undeploy" : "claudia destroy",
+    "undeploy": "claudia destroy",
     "test": "claudia test-lambda --event ./testdata/basicTest.json"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "aws-sdk": "^2.5.0",
     "claudia-bot-builder": "~1.4.1",
     "co": "^4.6.0",
+    "co-each": "^0.1.0",
     "co-request": "^1.0.0"
   }
 }
