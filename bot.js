@@ -4,36 +4,28 @@ const coreq = require('co-request');
 const each = require('co-each');
 const aws = require('aws-sdk');
 const lambda = new aws.Lambda();
+const slackDelayedReply = botBuilder.slackDelayedReply;
 
 const api = botBuilder((message, apiRequest) => {
 
   return new Promise(
     (resolve, reject) => {
-      lambda.invoke({
-        FunctionName: apiRequest.lambdaContext.functionName,
-        Qualifier: apiRequest.lambdaContext.functionVersion,
-        InvocationType: 'Event',
-        Payload: JSON.stringify({ slackEvent: message })
-      },
-      (err, done) => {
-        if (err) return reject(err);
-        resolve(done);
-      });
+      lambda.invoke(
+        lambdaInvocationParams(apiRequest, message),
+        (err, done) => {
+          if (err) return reject(err);
+          resolve(done);
+        }
+      );
   })
   .then(() => {
     const noOfUrls = urlsFromSlackMessage(message).length;
-
-    return {
-      text: `Hold on. I'm pinging ${noOfUrls} urls`
-    }
+    return { text: `Hold on. I'm pinging ${noOfUrls} urls` }
   })
-  .catch(() => {
-    return `Ok, something went seriously wrong...`
+  .catch((ex) => {
+    return `Ok, something went seriously wrong...\n ${ex.message}`
   });
 });
-
-
-const slackDelayedReply = botBuilder.slackDelayedReply;
 
 api.intercept((event) => {
   return co(function *() {
@@ -47,12 +39,23 @@ api.intercept((event) => {
 
     return slackDelayedReply(message, {
       response_type: "ephemeral",
-      text: `Ping results for '${pingResults.length}':`,
+      text: `Ping results:`,
       attachments: attachments
     })
     .then(() => false); // prevents normal execution
   });
 });
+
+module.exports = api;
+
+function lambdaInvocationParams(apiRequest, originalSlackMessage) {
+  return {
+    FunctionName: apiRequest.lambdaContext.functionName,
+    Qualifier: apiRequest.lambdaContext.functionVersion,
+    InvocationType: 'Event',
+    Payload: JSON.stringify({ slackEvent: originalSlackMessage })
+  };
+}
 
 function urlsFromSlackMessage(message){
   return message.text.split(',');
@@ -71,8 +74,7 @@ function pingUrl(url) {
       return `${url} - ${end} ms`;
     })
     .catch(function(err) {
-      return `Could not ping ${url} '${err.message}'`;
+      return `Could not ping ${url} - '${err.message}'`;
     });
 };
 
-module.exports = api;
